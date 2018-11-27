@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Hierarchy</fullName>
+    <apiAccessLevel>Unrestricted</apiAccessLevel>
+    <description>Package containing the Lightning components, Apex controller class, Apex Interface and dependent resource for a Hierarchy Lightning Component</description>
+    <namespacePrefix>kkltng</namespacePrefix>
+    <types>
+        <members>AccountHierarchyComponentData</members>
+        <members>AccountHierarchyComponentTest</members>
+        <members>HierarchyComponentController</members>
+        <members>HierarchyComponentExample</members>
+        <members>HierarchyComponentInterface</members>
+        <members>HierarchyComponentTest</members>
+        <members>OrgHierarchyComponentData</members>
+        <members>OrgHierarchyComponentTest</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>AccountHierarchy</members>
+        <members>Hierarchy</members>
+        <members>HierarchyComponentExample</members>
+        <members>HierarchyComponentExampleApex</members>
+        <members>OrgHierarchy</members>
+        <members>lefticonclick</members>
+        <members>ndclick</members>
+        <members>rebuildhierarchy</members>
+        <members>righticonclick</members>
+        <members>rootndclick</members>
+        <name>AuraDefinitionBundle</name>
+    </types>
+    <types>
+        <members>hierarchy</members>
+        <name>StaticResource</name>
+    </types>
+    <version>44.0</version>
+</Package>

@@ -1,0 +1,296 @@
+<!--
+    Author: KK Ramamoorthy
+    Company: salesforce
+-->
+<aura:component access="GLOBAL" extensible="false" implements="force:appHostable" controller="HierarchyComponentController">
+    <!-- Required scripts -->
+    <ltng:require scripts="/resource/kkltng__hierarchy/lodash.min.js" afterScriptsLoaded="{!c.afterScriptsLoaded}" />
+    <!-- Component events -->
+    <aura:registerEvent access="GLOBAL" name="rootndclick" type="c:rootndclick" description="Triggered when root node is clicked by the user - only if the rootNodeClick in not provided in the hierarchyData (or returned from apex class)" />
+    <aura:registerEvent access="GLOBAL" name="ndclick" type="c:ndclick" description="Triggered when a parent or child node is clicked by the user - only in case of data directly passed through hierarchyData attribute and if fetchFullData is false" />
+    <aura:registerEvent access="GLOBAL" name="lefticonclick" type="c:lefticonclick" description="Triggered when left icon on root node is clicked by the user - only if the leftIconClick in not provided in the hierarchyData (or returned from apex class)" />
+    <aura:registerEvent access="GLOBAL" name="righticonclick" type="c:righticonclick" description="Triggered when right icon on root node is clicked by the user - only if the rightIconClick in not provided in the hierarchyData (or returned from apex class)" />
+    <aura:registerEvent access="GLOBAL" name="rebuildhierarchy" type="c:rebuildhierarchy" description="Used for re-rendering the hierarchy data in case the hierarchyData attribute is changed. Needs to be triggred by a component or lightning app that uses this hierarchy component" />
+    <!-- Event handlers -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler event="aura:doneRendering" value="{!this}" action="{!c.doneRendering}" />
+    <aura:handler name="rebuildhierarchy" action="{!c.rebuildHierarchy}" />
+    <!-- All public attributes -->
+    <aura:attribute access="GLOBAL" name="apexClassForData" type="String" default="" description="Name of the apex class that has implemented HiearchyComponentInterface to get the full hiearchy data or hierarchy data on demand" />
+    <aura:attribute access="GLOBAL" name="fetchFullData" type="Boolean" default="true" description="Fetch full data using the Apex class or fetch on demand" />
+    <aura:attribute access="GLOBAL" name="apexInput" type="String" default='' description="Any input required to be passed to the Apex class as a JSON string" />
+    <aura:attribute access="GLOBAL" name="hierarchyData" type="String" default='' description="Full Hiearchy Data that needs to be used in this component" />
+    <aura:attribute access="GLOBAL" name="rnIconLeftURL" type="String" default='' description="URL for displaying the left icon on root node" />
+    <aura:attribute access="GLOBAL" name="rnIconRightURL" type="String" default='' description="URL for displaying the right icon on root node" />
+    <aura:attribute access="GLOBAL" name="title" type="String" default='' description="Title for the hierarchy being displayed" />
+    <aura:attribute access="GLOBAL" name="fontSize" type="Integer" default="1" description="Font size in rem for the title text" />
+    <aura:attribute access="GLOBAL" name="showSearch" type="Boolean" default="true" description="Show the search icon. Search icon not displayed if this value is set to false" />
+    <!-- All private attributes -->
+    <aura:attribute access="private" name="divParents" type="Aura.Component[]" description="Private Attribute" />
+    <aura:attribute access="private" name="divSelf" type="Aura.Component[]" description="Private Attribute" />
+    <aura:attribute access="private" name="divChildren" type="Aura.Component[]" description="Private Attribute" />
+    <aura:attribute access="private" name="hd" type="Object" description="Private Attribute" />
+    <aura:attribute access="private" name="mainParent" type="Object" description="Private Attribute" />
+    <aura:attribute access="private" name="parents" type="Object" description="Private Attribute" />
+    <aura:attribute access="private" name="vparents" type="Object" description="Private Attribute" />
+    <aura:attribute access="private" name="children" type="Object" description="Private Attribute" />
+    <aura:attribute access="private" name="vchildren" type="Object" description="Private Attribute" />
+    <aura:attribute access="private" name="mitems" type="Object" description="Private Attribute" />
+    <aura:attribute access="private" name="self" type="Object" description="Private Attribute" />
+    <aura:attribute access="private" name="pNos" type="Integer" description="Private Attribute" />
+    <aura:attribute access="private" name="cNos" type="Integer" description="Private Attribute" />
+    <aura:attribute access="private" name="pMore" type="Boolean" description="Private Attribute" />
+    <aura:attribute access="private" name="vpIndex" type="Integer" description="Private Attribute" />
+    <aura:attribute access="private" name="cMore" type="Boolean" default="false" description="Private Attribute" />
+    <aura:attribute access="private" name="vcIndex" type="Integer" description="Private Attribute" />
+    <aura:attribute access="private" name="moreView" type="Boolean" default="false" description="Private Attribute" />
+    <aura:attribute access="private" name="scrollUp" type="Boolean" default="false" description="Private Attribute" />
+    <aura:attribute access="private" name="filter" type="String" default="" description="Private Attribute" />
+    <aura:attribute access="private" name="filteredList" type="Object" description="Private Attribute" />
+    <aura:attribute access="private" name="showFilter" type="Boolean" default="false" description="Private Attribute" />
+    <aura:attribute access="private" name="showLeftIcon" type="Boolean" default="false" description="Private Attribute" />
+    <aura:attribute access="private" name="showRightIcon" type="Boolean" default="false" description="Private Attribute" />
+    <aura:attribute access="private" name="leftIconStyle" type="String" default="" description="Private Attribute" />
+    <aura:attribute access="private" name="rightIconStyle" type="String" default="" description="Private Attribute" />
+    <aura:attribute access="private" name="rootNode" type="Object" description="Private Attribute" />
+    <!--
+    <aura:renderIf isTrue="{!v.showSpinner}">
+        <div class="spContainer">
+            <div class="spr">
+                <div class="sp">
+                    <ui:spinner aura:id="spinner"/>
+                </div>
+            </div>      
+        </div>
+    </aura:renderIf>
+    -->
+    <!-- Show the search screen if user clicked the search link -->
+    <!-- Main view; in other words, more view is false -->
+    <aura:if isTrue="{!!v.moreView}">
+        <aura:if isTrue="{!v.showSearch}">
+            <div aura:id="searchContainer" id="searchContainer">
+                <div class="slds-grid">
+                    <div class="slds-col">
+                        <div class="slds-form-element">
+                            <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon--right">
+                                <div onclick="{!c.hideSearchList}">
+                                    <lightning:icon aura:id="searchClose" class="slds-input__icon slds-hide" iconName="utility:close" size="x-small" />
+                                </div>
+                                <ui:inputText aura:id="filter" class="slds-input" placeholder="Search" updateOn="keyup" keyup="{!c.filter}" value="{!v.filter}" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-grid slds-hide" aura:id="searchList">
+                    <div class="slds-col">
+                        <ul class="slds-has-dividers--bottom slds-has-block-links--space">
+                            <aura:iteration items="{!v.filteredList}" var="item">
+                                <li class="slds-item" id="{!item.id}" onclick="{!c.navigateHierarchyMain}">
+                                    <a id="{!item.id}">{!item.text}</a>
+                                </li>
+                            </aura:iteration>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </aura:if>
+        <div class="main" aura:id="main" id="main">
+            <!--
+            <aura:if isTrue="{!v.showFilter}">
+                
+                <div aura:id="filterDiv" class="sr">
+                    <ui:inputText aura:id="filter" class="srinput" placeholder='Search' updateOn="keyup" keyup="{!c.filter}" value="{!v.filter}"></ui:inputText>
+                    <div class="srList" onclick="{!c.hideFilter}">
+                        <aura:iteration items="{!v.filteredList}" var="item">
+                            <div id="{!item.id}" onclick="{!c.navigateHierarchyMain}">
+                                <p class="nodeListSecond" id="{!item.id}">{!item.text}</p>
+                            </div>
+                        </aura:iteration>
+                    </div>
+                </div>
+                
+            </aura:if>
+            -->
+            <div class="title" style="{!'font-size:'+v.fontSize+'rem'}">{!v.title}</div>
+            <!--
+            <aura:if isTrue="{!v.showSearch}">
+                <div class="sricon" onclick="{!c.showFilter}"></div>
+            </aura:if>
+            -->
+            <!-- Container for Parents -->
+            <div class="pc" aura:id="parentsContainer">
+                <div class="pct">
+                    <div class="pcr">
+                        <!-- Weird S1 issue; can't scroll throuhg Div. So show more button -->
+                        <aura:if isTrue="{!v.pMore}">
+                            <div class="nodeContainer">
+                                <div class="node">
+                                    <div class="more" onclick="{!c.showAllParents}">+{!v.vpIndex}</div>
+                                </div>
+                            </div>
+                            <div class="connContainer">
+                                <div class="connector"></div>
+                            </div>
+                        </aura:if>
+                        <aura:iteration items="{!v.vparents}" var="itemp" indexVar="vIndex">
+                            <div class="nodeContainer">
+                                <div class="node">
+                                    <!-- I want the node to be text based -->
+                                    <aura:if isTrue="{!itemp.type!='image'}">
+                                        <div id="{!itemp.id}" class="animated zoomIn rectNode rectNodeNormal" onclick="{!c.navigateHierarchyMain}">{!itemp.text}</div>
+                                    </aura:if>
+                                    <!-- I want the node to be images -->
+                                    <aura:if isTrue="{!itemp.type=='image'}">
+                                        <div id="{!itemp.id}" onclick="{!c.navigateHierarchyMain}" class="animated zoomIn slds-avatar slds-avatar--circle slds-avatar--medium">
+                                            <img id="{!itemp.id}" src="{!itemp.imageURL}" />
+                                        </div>
+                                        <!--<div id="{!itemp.id}" class="animated zoomIn circleNode parentImg" style="{!itemp.imageStyle}" onclick="{!c.navigateHierarchyMain}"></div>-->
+                                    </aura:if>
+                                </div>
+                            </div>
+                            <div class="connContainer">
+                                <div class="connectorText">{!itemp.description}</div>
+                                <div class="connector"></div>
+                            </div>
+                        </aura:iteration>
+                    </div>
+                </div>
+            </div>
+            <!-- Self Container -->
+            <div class="s" aura:id="selfContainer">
+                <div class="nodeContainer selfNode">
+                    <div class="node">
+                        <div id="{!v.self.id}" onclick="{!c.leftIconClicked}" class="animated zoomIn slds-avatar slds-avatar--circle slds-avatar--small">
+                            <img id="{!v.self.id}" src="{!v.rnIconLeftURL}" />
+                        </div>
+                        <!--<div id="{!v.self.id}" class="circleNode iconImg" style="{!v.leftIconStyle}" onclick="{!c.leftIconClicked}"></div>-->
+                    </div>
+                    <div class="node">
+                        <aura:if isTrue="{!v.self != null}">
+                            <!-- I want the node to be text based -->
+                            <aura:if isTrue="{!v.self.type!='image'}">
+                                <div id="{!v.self.id}" class="rectNode rectNodeNormal" onclick="{!c.selfClicked}">{!v.self.text}</div>
+                            </aura:if>
+                            <!-- I want the node to be images -->
+                            <aura:if isTrue="{!v.self.type=='image'}">
+                                <!--
+                                <div id="{!v.self.id}" class="animated zoomIn circleNode selfImg" style="{!v.self.imageStyle}" onclick="{!c.selfClicked}"></div>-->
+                                <div id="{!v.self.id}" onclick="{!c.selfClicked}" class="slds-avatar slds-avatar--circle slds-avatar--large">
+                                    <img id="{!v.self.id}" src="{!v.self.imageURL}" />
+                                </div>
+                            </aura:if>
+                            <div class="nodeListSecond selfImgText">{!v.self.description}</div>
+                            <!--<div class="nodeListSecond selfImgText">{!v.self.imageURL}</div>-->
+                        </aura:if>
+                    </div>
+                    <div class="node">
+                        <div id="{!v.self.id}" onclick="{!c.rightIconClicked}" class="animated zoomIn slds-avatar slds-avatar--circle slds-avatar--small">
+                            <img id="{!v.self.id}" src="{!v.rnIconRightURL}" />
+                        </div>
+                        <!--<div id="{!v.self.id}" class="circleNode iconImg" style="{!v.rightIconStyle}" onclick="{!c.rightIconClicked}"></div>-->
+                    </div>
+                </div>
+            </div>
+            <!-- Children Container -->
+            <div class="c" aura:id="childrenContainer">
+                <div class="ctable">
+                    <!-- show all connectors in this row -->
+                    <div class="ctablerow">
+                        <aura:iteration items="{!v.vchildren}" var="itemcc">
+                            <div class="ctablecell ctablecellpad">
+                                <div class="connContainer">
+                                    <div class="connectorText ctc">{!itemcc.description}</div>
+                                    <div class="connector"></div>
+                                </div>
+                            </div>
+                        </aura:iteration>
+                        <!-- Weird S1 issue; can't scroll throuhg Div. So show more button -->
+                        <div class="ctablecell">
+                            <aura:if isTrue="{!v.cMore}">
+                                <div class="connContainer">
+                                    <div class="connectorText ctc"></div>
+                                    <div class="connector"></div>
+                                </div>
+                            </aura:if>
+                        </div>
+                    </div>
+                    <!-- show the children here -->
+                    <div class="ctablerow">
+                        <aura:iteration items="{!v.vchildren}" var="itemc">
+                            <div class="ctablecell ctablecellpad">
+                                <!-- I want the node to be text based -->
+                                <aura:if isTrue="{!itemc.type!='image'}">
+                                    <div id="{!itemc.id}" class="animated zoomIn rectNode rectNodeSmall" onclick="{!c.navigateHierarchyMain}">{!itemc.text}</div>
+                                </aura:if>
+                                <!-- I want the node to be images -->
+                                <aura:if isTrue="{!itemc.type=='image'}">
+                                    <div id="{!itemc.id}" onclick="{!c.navigateHierarchyMain}" class="animated zoomIn circleNode">
+                                        <div class="slds-avatar slds-avatar--circle slds-avatar--medium">
+                                            <img id="{!itemc.id}" src="{!itemc.imageURL}" />
+                                        </div>
+                                    </div>
+                                    <!--<div id="{!itemc.id}" class="animated zoomIn circleNode childImg" style="{!itemc.imageStyle}" onclick="{!c.navigateHierarchyMain}"></div>-->
+                                </aura:if>
+                            </div>
+                        </aura:iteration>
+                        <!-- Weird S1 issue; can't scroll throuhg Div. So show more button -->
+                        <div class="ctablecell">
+                            <aura:if isTrue="{!v.cMore}">
+                                <div class="more" onclick="{!c.showAllChildren}">+{!v.vcIndex}</div>
+                            </aura:if>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aura:if>
+    <!-- This section is shown to the user if one of the more buttons is clicked/tapped -->
+    <aura:if isTrue="{!v.moreView}">
+        <div class="s" aura:id="selfContainer">
+            <div class="nodeContainer selfNode">
+                <div class="node">
+                    <div id="{!v.self.id}" onclick="{!c.leftIconClicked}" class="animated zoomIn slds-avatar slds-avatar--circle slds-avatar--small">
+                        <img id="{!v.self.id}" src="{!v.rnIconLeftURL}" />
+                    </div>
+                    <!--<div id="{!v.self.id}" class="circleNode iconImg" style="{!v.leftIconStyle}" onclick="{!c.leftIconClicked}"></div>-->
+                </div>
+                <div class="node">
+                    <!-- I want the node to be text based -->
+                    <aura:if isTrue="{!v.self.type!='image'}">
+                        <div id="{!v.self.id}" class="rectNode rectNodeNormal" onclick="{!c.selfClicked}">{!v.self.text}</div>
+                        <!--<div id="{!v.self.id}" class="animated zoomIn rectNode rectNodeNormal" onclick="{!c.selfClicked}">{!v.self.text}</div>-->
+                    </aura:if>
+                    <!-- I want the node to be images -->
+                    <aura:if isTrue="{!v.self.type=='image'}">
+                        <!--<div id="{!v.self.id}" class="animated zoomIn circleNode selfImg" style="{!v.self.imageStyle}" onclick="{!c.selfClicked}"></div>-->
+                        <div id="{!v.self.id}" onclick="{!c.selfClicked}" class="slds-avatar slds-avatar--circle slds-avatar--large">
+                            <img id="{!v.self.id}" src="{!v.self.imageURL}" />
+                        </div>
+                    </aura:if>
+                    <div class="nodeListSecond selfImgText">{!v.self.description}</div>
+                </div>
+                <div class="node">
+                    <div id="{!v.self.id}" class="circleNode iconImg" style="{!v.rightIconStyle}" onclick="{!c.rightIconClicked}"></div>
+                </div>
+            </div>
+        </div>
+        <div class="back" id="{!v.self.id}" onclick="{!c.navigateHierarchy}">Go Back</div>
+        <div class="ac" aura:id="allItemsList" id="allItemsList">
+            <aura:iteration items="{!v.mitems}" var="item">
+                <div class="nodeList" id="{!item.id}" onclick="{!c.navigateHierarchyMain}">
+                    <aura:if isTrue="{!item.type=='image'}">
+                        <div class="circleNode nlImg" style="{!item.imageStyle}"></div>
+                        <div class="nodeText">
+                            <p class="nodeListMain" id="{!item.id}">{!item.text}</p>
+                            <p class="nodeListSecond" id="{!item.id}">{!item.description}</p>
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!item.type!='image'}">
+                        <p class="nodeListMain" id="{!item.id}">{!item.text}</p>
+                        <p class="nodeListSecond" id="{!item.id}">{!item.description}</p>
+                    </aura:if>
+                </div>
+            </aura:iteration>
+        </div>
+    </aura:if>
+</aura:component>

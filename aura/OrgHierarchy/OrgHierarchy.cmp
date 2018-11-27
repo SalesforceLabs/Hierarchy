@@ -1,0 +1,30 @@
+<aura:component access="GLOBAL" extensible="false" implements="flexipage:availableForAllPageTypes,force:appHostable">
+	<aura:attribute name="userName" type="String" default="" description="Name of the user to default at the root level"/>
+    <aura:attribute access="GLOBAL" name="fetchFullData" type="Boolean" default="false" description="Fetch full data or fetch on demand"/>
+    <aura:attribute access="GLOBAL" name="noOfParents" type="Integer" default="10" required="true" description="Maximum number of managers to display - Maximum of 10 allowed"/>
+    <aura:attribute access="GLOBAL" name="noOfRecords" type="Integer" default="50000" description="Maximum number of user records that can be fetched in a single query. Maximum of 50,000 allowed"/>
+    <aura:attribute access="GLOBAL" name="nodeType" type="String" default="text" description="Node type - image or text"/>
+    <aura:attribute access="GLOBAL" name="title" type="String" default='' description="Title for the hierarchy being displayed"/>
+    <aura:attribute access="GLOBAL" name="fontSize" type="Integer" default="1" description="Font size in rem for the title text"/>
+    
+    <aura:attribute access="PRIVATE" name="apexInput" type="String" default="" description="Private attribute"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="change" value="{!v.apexInput}" action="{!c.valueChanged}"/>
+
+    <aura:registerEvent name="rebuildhierarchy" type="c:rebuildhierarchy"/>
+
+    <c:Hierarchy aura:id="orgh" 
+    	hierarchyData=""
+		apexClassForData="kkltng.OrgHierarchyComponentData"
+		fetchFullData="{!v.fetchFullData}" 
+		apexInput="{!v.apexInput}"
+        rnIconLeftURL="/resource/kkltng__hierarchy/phone1.png" 
+       	rnIconRightURL="/resource/kkltng__hierarchy/email1.png"
+		rootndclick="{!c.rootNodeClicked}"
+		ndclick="{!c.nodeClicked}"
+		lefticonclick="{!c.leftIconClicked}"
+		righticonclick="{!c.righticonclicked}"
+        title="{!v.title}"
+        fontSize="{!v.fontSize}"
+	/>
+</aura:component>

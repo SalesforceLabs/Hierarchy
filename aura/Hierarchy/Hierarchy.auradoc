@@ -1,0 +1,168 @@
+<aura:documentation>
+	<aura:description>
+		<p>
+		The <code>kkltng:Hierarchy</code> component can be used for displaying any hierarchial data like Org Hierarchy, Account Hierarchy etc. This component supports interactive navigation of the data represented in the hierarchy. The hierarchy is displayed as shown below.</p>
+		<img src="/resource/kkltng__hierarchy/main.png"/>
+		<p>
+		At a high level, there are three different sections within the Hiearchy. The top most section is for 'Parent' elements in the hiearchy. The second section displays the root node which is the hierarchy element/node in focus and the thrid section displays all the 'Child' elements.
+		</p>
+		<p>
+		The hierarchy data for the component can be supplied in two ways 
+		</p>
+		<ul>
+			1. Through an Apex Class
+		</ul>
+		<ul>
+			2. By directly supplying the data as JSON string
+		</ul>
+
+		<p>Data can also be supplied in one single shot or can be fetched on demand. Fetching on demand is especially useful when you are dealing with high volume data. If you want to fetch data on demand, assign <code>false</code> to the attribute <code>fetchFullData</code> </p>
+
+		<h3>Data using Apex class</h3>
+		<p>Create an apex class that implements the interface <code>kkltng.HierarchyComponentInterface</code>. To fetch data in single shot, implement the method <code>getFullHierarchyData</code>. If you want to fetch on demand, then implement the method <code>getHierarchyDataOnDemand</code>. It is important that the class is a 'global class' and both the methods are 'global' methods, so that this component can instantiate/access it. </p>
+
+		Both these methods have to return data of type <code>kkltng.HierarchyComponentController.hierarchyData</code>. The return data has two parts
+		<ul>
+			1. Root Node - If provided, the component will build the hierarchy by placing the specified node in the 'Root' node section. If you don't provide any data in root node, the component will automatically postion the top most parent as the root node. For e.g., if you are using this component for displaying org hierarchy, you may want to position the details of the user accessing this component as the root node and then display  the user's managers and direct reports accordingly.
+		</ul>
+		<ul>
+			2. Node List - This is an array/list of all the nodes that you want to display in the hierarchy including the root node. You only have to build a simple array with the following fields. The component will build the hierarchy based on the parent and child ID fields
+			<br/>
+			<table>
+				<tr>
+					<th>Field Name</th>
+					<th>Description</th>
+				</tr>
+					<td>id</td>
+					<td>The ID of the node. This needs to be unique for each row in this array</td>
+				<tr>
+					<td>parentid</td>
+					<td>This is the ID of the parent to this node. Mulitple nodes can have the same parent however, a node with this parent ID as it's ID, should occur once in the array</td>
+				</tr>
+				<tr>
+					<td>type</td>
+					<td>This can take two values.
+						<ul> 1. Image - The node will display an image. The url for the image can be provided in the field 'imageURL'</ul>
+						<ul> 2. Text - The node will display whatever value has been assigned to the 'text' field</ul>
+					</td>
+				</tr>
+				<tr>
+					<td>text</td>
+					<td>Value for Node text</td>
+				</tr>
+				<tr>
+					<td>description</td>
+					<td>Any additional information you want to display for the node. Please see picture above</td>
+				</tr>
+				<tr>
+					<td>rootNodeClick</td>
+					<td>
+						This attribute is used for passing any events you want to fire when the user clicks the root node. It is of type <code>kkltng.HierarchyComponentController.evt</code> and has two parts. The first part <code>name</code> is the name of the event. For e.g., <code>'e.force:navigateToComponent'</code>. The second part is a JSON String for the event parameters. The parameters are usually a name/value pair, please refer to the documentation on a specific event that you want to trigger for more details. This attribute is optional and if no value is provided, the component just fires the <code>rootndclick</code> event which can then be handled by the app or another comonponent that has instantiated the hierarchy component. Check the examples for more information on usage of this attribute
+					</td>
+				</tr>
+				<tr>
+					<td>leftIconClick</td>
+					<td>
+						This attribute is used for passing any events you want to fire when the user clicks the left icon on the root node. It is of type <code>kkltng.HierarchyComponentController.evt</code> and has two parts. The first part <code>name</code> is the name of the event. For e.g., <code>'e.force:navigateToComponent'</code>. The second part is a JSON String for the event parameters. The parameters are usually a name/value pair, please refer to the documentation on a specific event that you want to trigger for more details.
+						This attribute is optional and if no value is provided, the component just fires the <code>lefticonclick</code> event which can then be handled by the app or another comonponent that has instantiated the hierarchy component. Check the examples for more information on usage of this attribute
+					</td>
+				</tr>
+				<tr>
+					<td>rightIconClick</td>
+					<td>
+						This attribute is used for passing any events you want to fire when the user clicks the right icon on the root node. It is of type <code>kkltng.HierarchyComponentController.evt</code> and has two parts. The first part <code>name</code> is the name of the event. For e.g., <code>'e.force:navigateToComponent'</code>. The second part is a JSON String for the event parameters. The parameters are usually a name/value pair, please refer to the documentation on a specific event that you want to trigger for more details.
+						This attribute is optional and if no value is provided, the component just fires the <code>righticonclick</code> event which can then be handled by the app or another comonponent that has instantiated the hierarchy component. Check the examples for more information on usage of this attribute
+					</td>
+				</tr>
+				<tr>
+					<td>data</td>
+					<td>You can pass any data as JSON string in this for further use in the component. For e.g., you may want to use this instead of the rootNodeClick attribute for custom handling of navigation when the user clicks on the root node. Similarly you can use this attribute instead of the leftIconClick and rightIconClick attributes for more complex event handling</td>
+				</tr>
+			</table>
+		</ul>
+		<p>Once you create this class, you can assign the class name to the <code>apexClassForData</code> attribute of the component. The component will dynamically call your implemented class and it's methods </p>
+
+		<p>You can also pass additional data to your apex class and methods using the attribute <code>apexInput</code>. You can pass additional data as JSON string and then use the same in your apex class to incorporate any additional logic</p>
+
+		<h3>Directly supplying the data as JSON string</h3>
+		<p>You can also directly supply the data to the component as a JSON String using the attribute <code>hierarchyData</code>. For e.g.</p>
+
+		<pre>
+		var hd = { rootNode: 
+					{	id : '3',
+						type : null,
+						parentid : '1'
+						...
+					},
+				   nodes:[
+				   	{	id: '1',
+				   		parentid: null,
+				   		text: 'Node 1',
+				   		description: 'My Node 1',
+				   		imageURL: '/resources/images/someimage.png',
+				   		type: 'image',
+				   		"rootNodeClick":{
+				   			"name":"e.force:navigateToObjectHome",
+			            	"params":"{\"scope\":\"Account\"}"
+			         	},
+				   		data: {...}
+				   	},
+				   	{
+				   		id: '2',
+				   		parentid: '1',
+				   		text: 'Node 2',
+				   		...
+				   	},
+				   	{
+				   		id: '3',
+				   		parentid: '1',
+				   		text: 'Node 3',
+				   		...
+				   	}
+				   ]
+				}   	
+		</pre>
+
+	<br/>
+	<p>
+		Once you have supplied the data (either through Apex class or directly using the <code>hierarchyData</code> attribute, the component will automatically build the hierarchy and display it. User can navigate the hierarchy by either clicking the parent nodes or child nodes. When the parent/child nodes are clicked, the component automatically brings the clicked node to focus as the root node. If the user clicks the root node and if you supplied values for attribute rootNodeClick in hierarchyData (or the apex class), then the component will fire the event specified in the rootNodeClick attribute. If no value is specified in the rootNodeClick attribute then the component event <code>kkltng:rootndclick</code> is triggred for you to handle. The root node object is also passed as a parameter so that you know which node was clicked by the user.
+	</p>
+
+	<p>
+		Apart from these, there are two more events possible on the root node, based on values assigned to the following component attributes
+		<ul>
+			<p>1. <code>rnIconLeftURL</code> - If one is provided, the component will automatically place it to the left side of the root node (please see picture above). Also, when the user the clicks this icon, if hierarchy data has value in leftIconClick attribute, then the component will fire the event specified. If not, the comoponent triggers event <code>lefticonclick	</code> with the root node object as parameter, which can be further handled in your code </p>
+		</ul>
+		<ul>
+			<p>2. <code>rnIconRightURL</code> - if one is provided, the component will automatically place it to the right side of the root node (please see picture above). Also, when the user the clicks this icon, if hierarchy data has value in rightIconClick attribute, then the component will fire the event specified. If not, the comoponent triggers event <code>righticonclick</code> with the root node object as parameter, which can be further handled in your code</p>
+		</ul>
+	</p>
+
+	<p>
+		Also, if you supplied the data directly (without using the Apex class), you can still load data on demand (provided you set the attribute <code>fetchFullData</code> to <code>false</code>. When the user clicks on a parent or a child node, the component triggers the event <code>ndclick</code> with the node object that the user clicked on, as a parameter. Then the component will wait for you to handle the event (you may want to trigger a spinner in your component to avoid any user interaction). Once you have fetched your data (for e.g., by calling an API) within your event handler, you can set the <code>hierarchyData</code> attribute and fire another component event <code>rebuildhierarchy</code> for the component to rebuild the hierarchy based on the new data provided.
+	</p>
+	<p>
+		To enable better user experience on mobile devices, the component automatically calculates the available viewport area to display the parents and children and in case there are more number of parents and/or children avilable to display within the viewport, the component will automatically display this <img src="/resource/kkltng__hierarchy/more.png"/> image with total number of nodes that are not being displayed. If the user clicks on this, the component will display all the parents or children of a particular root node, as a list. User can then choose a specific node to focus on and the component will rebuild the hierarchy based on the node selected by the user.
+
+	</p>
+	<p>
+		User can also search for specific nodes within the hierarchy. Note that currently only sarch on the 'text' attribute is supported. Search on 'description' isn't supported yet.
+	</p>
+
+	<h3>How to use the component in Lightning App Builder</h3>
+		<p>
+		When using this component in the lightning app builder, an admin can configure this component to fetch data from an Apex class by providing a class that implements the kkltng.HierarchyComponentInterface. An example Apex class (kkltng.HierarchyComponentExample) has been provided in this package for reference. Admin can also configure the icons that are displayed on the left and right side of the root node. Admin can also pass a JSON string as an input to the Apex class if required.
+		</p>
+		<p>
+		This package also includes two example components that can be used as reference for using this component in your own components or apps.
+		</p>
+	</aura:description>
+	<aura:example ref="kkltng:HierarchyComponentExample" name="HierarchyComponentExample" label="Customizing the kkltng:Hierarchy component">
+		<p>This example shows how you can use pass the HierarchyData directly to the component and render the hierarchy</p>
+		<p>Clicking on the root node will throw an error because the 'e.force:navigateToObjectHome' event can be executed only in Salesforce1 app and not on standalone app. To avoid this error, don't supply the 'rootNodeClick' with any value in the hierarchyData which will in turn trigger the rightNodeClick event for you to handle in your component or app </p>
+	</aura:example>
+	<aura:example ref="kkltng:HierarchyComponentExampleApex" name="HierarchyComponentExampleApex" label="Customizing the kkltng:Hierarchy component using Apex class">
+		<p>This example shows how you can use pass the HierarchyData using an Apex class to the component and render the hierarchy</p>
+		<p>This example calls the apex class kkltng:HierarchyComponentExample to fetch the hierarchy data</p>
+	</aura:example>
+</aura:documentation>

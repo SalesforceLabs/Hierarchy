@@ -1,0 +1,9 @@
+<design:component label="Account Hierarchy">
+    <!--<design:attribute name="accountId" label="Account ID" description="ID of the account for the root node. The ID provided here will be used as the root node for the hierarchy"/>-->
+    <design:attribute name="noOfParents" min="1" max="10" label="No. of visible parent accounts" description="Maximum number of parent accounts to display - Maximum of 10 allowed"/>
+    <design:attribute name="noOfRecords" min="1" max="50000" label="Max. number of child accounts" description="Maximum number of child accounts that can be fetched in a single query. Maximum of 50000 allowed"/>
+	<design:attribute  name="nodeType" label="Node Type" description="Node type - image or text. Choosing 'image' displays the accounts photourl image as the node. Choosing 'text' displays the account name as the node"/>
+	<design:attribute  name="title" label="Title" description="Title for the hierarchy data being displayed"/>
+	<design:attribute  name="fontSize" label="Title font size" description="Font size for the title in rem units. Default is 1 rem"/>
+
+</design:component>

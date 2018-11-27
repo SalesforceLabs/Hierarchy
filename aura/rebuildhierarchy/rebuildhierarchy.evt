@@ -1,0 +1,2 @@
+<aura:event type="COMPONENT" access="GLOBAL" description="Used for re-rendering the hierarchy data in case the hierarchyData attribute is changed. Needs to be triggred by a component or lightning app that uses this hierarchy component">
+</aura:event>

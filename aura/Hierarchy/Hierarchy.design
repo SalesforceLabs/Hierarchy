@@ -1,0 +1,10 @@
+<design:component>
+	<design:attribute name="apexClassForData" label="Apex Data Class" description="Name of the apex class that has implemented HiearchyComponentInterface to get the full hiearchy data or hierarchy data on demand"/>
+	<design:attribute name="fetchFullData" label="Fetch full data" description="Fetch full data using the Apex class or fetch on demand;true means fetch full data in one go"/>
+	<design:attribute name="apexInput" label="Input for Apex class" description="Any input required to be passed to the Apex class as a JSON string"/>
+
+	<design:attribute name="rnIconLeftURL" label="Left Icon URL" description="URL for displaying the left icon on root node"/>
+	<design:attribute name="rnIconRightURL" label="Right Icon URL" description="URL for displaying the right icon on root node"/>
+	
+	
+</design:component>

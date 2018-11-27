@@ -1,0 +1,3 @@
+<aura:event type="COMPONENT" access="GLOBAL" description="Triggered when a parent or child node is clicked by the user - only in case of data directly passed through hierarchyData attribute and if fetchFullData is false">
+	<aura:attribute name="node" type="Object"/>
+</aura:event>

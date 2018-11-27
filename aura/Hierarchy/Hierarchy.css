@@ -1,0 +1,401 @@
+.THIS.main{
+	
+	margin:14px;
+	background: white;
+	border-radius: 0.3125rem;
+	/*
+	height: 600px;
+	margin-top:14px;
+	margin-bottom: 14px;
+	*/
+}
+
+.THIS.hide{
+	visibility: hidden;
+}
+
+.THIS.show{
+	visibility: visible;
+}
+
+.THIS.spContainer{
+	height:100vh;
+	width: 100%;
+	position: fixed;
+	overflow: hidden;
+	padding: 10px;
+	z-index: 2000;
+	background: rgba(0, 0, 0, 0.5);
+	display: table;
+}
+
+.THIS .spr{
+	display: table-row;
+	height:100vh;
+	width: 100%;
+}
+
+.THIS .sp{
+	display: table-cell;
+	height:100vh;
+	width: 100%;
+	text-align: center;
+	vertical-align: middle;
+}
+
+
+.THIS .sr{
+	height:100vh;
+	width: 100%;
+	position: fixed;
+	overflow: hidden;
+	padding: 10px;
+	z-index: 1000;
+	background: rgba(0, 0, 0, 0.5);
+}
+
+.THIS .srinput{
+	width: 100%
+}
+
+.THIS .srList{
+	background: white;
+	margin-top: 10px;
+	width: 100%;
+	height: 100%;
+	padding: 10px;
+	overflow: hidden;
+	word-wrap: break-word;
+	cursor:pointer;
+}
+
+.THIS .sricon{
+	/*position: fixed;*/
+	float: right;
+	padding: 5px;
+	color: #999;;
+	margin: 5px;
+	height: 20px;
+	width: 20px;
+	cursor: pointer;
+	background-repeat: no-repeat;
+  	background-size: contain;
+	background-image:url(/resource/kkltng__hierarchy/search.png);
+}
+
+.THIS .title{
+	float: left;
+	padding: 5px;
+	color: #3c3d3e;
+}
+
+.THIS .pc{
+	/*height:calc(70vh - 100px);*/
+	width: 100%;
+	background-color:white;
+	overflow: hidden;
+}
+
+.THIS .pch{
+
+}
+
+.THIS .pct{
+	display:table;
+	margin-left: auto;
+    margin-right: auto;
+    height: 100%;
+    width: 100%;
+
+}
+
+.THIS .pcr{
+	display: table-cell;
+	vertical-align: bottom;
+}
+
+.THIS .s{
+
+	/*height:100px; Commented for DF issue*/
+	width: 100%;
+	/*background-color:#2A94D6;*/
+	background-color:#F5F5F5;
+	/*border-bottom: solid;
+	border-bottom-width: medium;
+	border-top: solid;
+	border-top-width: medium;
+	border-color:#2A94D6;
+	overflow: hidden;
+	*/
+}
+
+.THIS .c{
+	/*height:30vh;*/
+	width: 100%;
+	background-color:white;
+	overflow: hidden;
+	padding-bottom: 5px;
+	border-radius: 0.3125rem;
+}
+
+.THIS .ctable{
+	display: table;
+	width: 100%;
+	
+}
+
+.THIS .ctablerow{
+	display: table-row;
+	width: 100%;
+}
+
+.THIS .ctablecell{
+	display: table-cell;
+	vertical-align: middle;
+	/*padding-left: 5px;
+	padding-right: 5px;
+	*/
+}
+
+.THIS .ctablecellpad{
+	padding-left: 5px;
+	padding-right: 5px;
+	
+}
+
+.THIS .connContainer{
+	overflow: hidden;
+	display: table;
+	width: 100%;
+	position: relative;
+	text-align: center;
+}
+
+.THIS .connector{
+	background-color:#F5F5F5;
+	width:5px;
+	height:35px;
+	margin: 0 auto;
+  	white-space: nowrap;
+  	top:0px;
+
+}
+
+.THIS .connectorText{
+	color: #999;;
+    font-size: 0.7em;
+    top:0px;
+    padding-top: 5px;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    white-space: nowrap;
+  	overflow: hidden;
+  	text-overflow: ellipsis;
+}
+
+.THIS .ctc{
+	padding-top: 10px;
+}
+
+.THIS .more{
+    margin: auto;
+	text-align: center;
+    border-radius:50%;
+  	border: 3px solid #dadee2;
+  	height: 30px;
+	width: 30px;
+	line-height: 30px;
+  	background: #2A94D6;
+  	color: white;
+  	font-weight: bold;
+  	box-shadow: none;
+  	cursor: pointer;
+  	white-space: nowrap;
+  	overflow: hidden;
+  	font-size: 0.7em;
+}
+
+.THIS .selfNode{
+	height: 100%;
+	margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+
+.THIS .nodeContainer{
+	overflow: hidden;
+	display: table;
+	width: 100%;
+
+}
+
+.THIS .node{
+	display: table-cell;
+	padding: 2px;
+	vertical-align: middle;
+	text-align: center;
+}
+
+
+.THIS .rectNode{
+	margin: auto;
+  	border: 1px solid #dadee2;
+  	border-radius: .3125rem;
+  	background: #ffffff;
+  	box-shadow: none;
+  	cursor: pointer;
+  	text-align: center;
+  	white-space: nowrap;
+  	overflow: hidden;
+  	text-overflow: ellipsis;
+  	font-size: 0.8em;
+  	height: 35px;
+  	line-height: 35px;
+
+}
+
+.THIS .circleNode{
+	margin: auto;
+	text-align: center;
+    border-radius:50%;
+  	box-shadow: none;
+  	cursor: pointer;
+  	/*overflow: hidden;*/ 
+  	background-repeat: no-repeat;
+  	background-size: contain;
+  	background-size: cover;
+}
+
+.THIS .selfImgText{
+	/*  width: 50vw; Commented for the DF issue*/
+	margin: auto;
+	text-align: center;
+	text-overflow: ellipsis;
+	/*white-space: nowrap; */
+	overflow: hidden;
+	padding-top: 5px;
+}
+
+.THIS .selfImg{
+	height: 70px;
+	width: 70px;
+  	border: 3px solid #2A94D6;
+}
+
+.THIS .parentImg{
+	height: 50px;
+	width: 50px;
+  	border: 3px solid #dadee2;
+}
+
+.THIS .childImg{
+	height: 30px;
+	width:  30px;
+  	border: 3px solid #dadee2;
+}
+
+.THIS .iconImg{
+	height: 30px;
+	width:  30px;
+}
+
+.THIS .rectNodeSmall{
+	width: 70px;
+}
+
+.THIS .rectNodeNormal{
+	width: 220px;
+}
+
+
+.THIS.back{
+	padding: 5px;
+	color: #999;;
+	cursor: pointer;
+	font-size: 0.8em;
+	margin: 10px;
+}
+
+.THIS .nodeList{
+	padding: 5px;
+	width: 100%;
+	overflow: hidden;
+	word-wrap: break-word;
+	margin: auto;
+	position: relative;
+	border-top: 1px solid #2A94D6;
+	cursor: pointer;
+}
+
+.THIS .nlImg{
+	height: 30px;
+	width: 30px;
+	float:left;
+}
+
+.THIS .nodeText{
+	margin-left: 35px;
+}
+
+.THIS .nodeListMain{
+	margin: auto;
+	color: #2A94D6;
+}
+
+.THIS .nodeListSecond{
+	font-size: 0.8em;
+	color: #999;
+	margin: auto;
+}
+
+.THIS.ac{
+	overflow-y: scroll;
+	/*height: calc(70vh - 100px);*/
+	webkit-overflow-scrolling: touch;
+}
+
+
+.THIS ::-webkit-scrollbar { 
+    display: none; 
+}
+
+
+@-webkit-keyframes zoomIn {
+  0% {
+    opacity: 0;
+    -webkit-transform: scale3d(.3, .3, .3);
+    transform: scale3d(.3, .3, .3);
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes zoomIn {
+  0% {
+    opacity: 0;
+    -webkit-transform: scale3d(.3, .3, .3);
+    transform: scale3d(.3, .3, .3);
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.THIS .zoomIn {
+  -webkit-animation-name: zoomIn;
+  animation-name: zoomIn;
+}
+
+.THIS .animated {
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  /*-webkit-animation-animation-delay: 1s;
+  animation-delay: 1s;*/
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}

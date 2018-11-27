@@ -1,0 +1,57 @@
+<aura:documentation>
+
+		<aura:description>
+			<p>
+			The <code>kkltng:OrgHierarchy</code> component can be used to visually represent your organization hierarchy. This component internally uses the <code>kkltng:Hierarchy</code> component for displaying the hierarchy and interactive navigation. This component constructs the hierarchy based on the 'Manager ID' field in the user record.</p>
+		<img src="/resource/kkltng__hierarchy/org.png"/>
+		<p>
+		At a high level, there are three different sections within the Hiearchy. The top most section is for displaying 'Manager' nodes. The second section displays the root node which is the employee/user in focus and the thrid section displays all the users that reports up to the root node user.
+		</p>
+		<p>
+		Following are the configurable attributes for this component</p>
+		<table>
+			<tr>
+				<th>Attribute</th>
+				<th>Description</th>
+		    </tr>
+		    <!--
+		    <tr>
+		    	<td>Default User Name</td>
+		    	<td>If provided, the Org hierarchy will be displayed with this user name as the root node. If not, the current user ID is used as the root node</td>
+		    </tr>
+			-->
+
+		    <tr>
+		    	<td>Fetch full data</td>
+		    	<td>If selected all the users, their managers and their direct report information is fetched in one single shot (up to a miximum of 50,000 user records). If not selected, then the user information in queried on demand</td>
+		    </tr>
+		    <tr>
+		    	<td>No. of visibe managers</td>
+		    	<td>In case of querying on demand, this attribute controls how many managers can be displayed/queried for particular user. Since querying manager records requires a recursive query, this limit is required so that the queries don't fail because of apex limits. The maximum value for this field is 10. That is, only up to 10 managers are made visible for a particular employee. This value doesn't impact the number of direct reports displayed</td>
+		    </tr>
+		    <tr>
+		    	<td>Max. number of users</td>
+		    	<td>Maximum number of user records to query. This can have a maximum value of 50,000 records</td>
+		    </tr>
+		    
+		    <tr>
+		    	<td>Node type</td>
+		    	<td>
+		    		<p>
+		    			image : The nodes are displayed as images. The <code>FullPhotoUrl</code> field in the <code>User</code> object is used to display the node image. The value is case sensitive
+		    		</p>
+		    		<p>
+		    			text: The nodes are displayed as text, with the user name as the node text. The value is case sensitive.
+		    		</p>
+
+		    	</td>
+		    </tr>
+
+		</table>
+
+	</aura:description>
+	<aura:example ref="kkltng:OrgHierarchy" name="OrgHierarchy" label="Displaying the Org Hierarchy">
+		<p>This example shows how the org hierarchy is displayed for the current context user</p>
+	</aura:example>
+	
+</aura:documentation>

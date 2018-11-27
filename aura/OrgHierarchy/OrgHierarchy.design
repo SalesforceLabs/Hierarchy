@@ -1,0 +1,10 @@
+<design:component label="Org Hierarchy">
+	<!--<design:attribute name="userName" label="Default User Name"  description="Name of the user to default at the root level. If no user is provided, the current user will be displayed at the root level"/>-->
+    <design:attribute name="fetchFullData" label="Fetch full data" description="If enabled, fetches all the user data in a single query instead of loading the data on demand. Enabling this is more suited for smaller orgs that have lesser than 500 users. If disabled, the component will query your salesforce user data on demand (lazy loading). That is, only user data relevant to the selected root node is queried. This setting is suitable for orgs with more than 500 users"/>
+    <design:attribute name="noOfParents" min="1" max="10" label="No. of visible managers" description="Maximum number of managers to display - Maximum of 10 allowed"/>
+    <design:attribute name="noOfRecords" min="1" max="50000" label="Max. number of users" description="Maximum number of user records that can be fetched in a single query. Maximum of 50000 allowed"/>
+	<design:attribute  name="nodeType" label="Node Type" description="Node type - image or text. Choosing 'image' displays the user's chatter profile image as the node. Choosing 'text' displays the user's name as the node"/>
+	<design:attribute  name="title" label="Title" description="Title for the hierarchy data being displayed"/>
+	<design:attribute  name="fontSize" label="Title font size" description="Font size for the title in rem units. Default is 1 rem"/>
+    
+</design:component>

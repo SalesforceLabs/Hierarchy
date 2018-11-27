@@ -1,0 +1,3 @@
+<aura:event type="COMPONENT" access="GLOBAL" description="Triggered when right icon on root node is clicked by the user - only if the rightIconClick in not provided in the hierarchyData (or returned from apex class)">
+	<aura:attribute name="node" type="Object"/>
+</aura:event>

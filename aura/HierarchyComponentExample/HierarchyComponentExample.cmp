@@ -1,0 +1,18 @@
+<aura:component implements="force:appHostable">
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+	<aura:attribute name="hData" type="String" description="Hierarchy Data"/>
+	<aura:attribute name="apexClassForData" type="String" default=""/>
+
+	<aura:registerEvent name="rebuildhierarchy" type="c:rebuildhierarchy"/>
+
+	<c:Hierarchy hierarchyData="{!v.hData}"
+		apexClassForData="{!v.apexClassForData}"
+		fetchFullData="true" 
+		rnIconLeftURL="https://cdn4.iconfinder.com/data/icons/e-commerce-icon-set/48/More-256.png" 
+		rnIconRightURL="https://cdn4.iconfinder.com/data/icons/e-commerce-icon-set/48/Less-128.png"
+		rootndclick="{!c.rootNodeClicked}"
+		ndclick="{!c.nodeClicked}"
+		lefticonclick="{!c.leftIconClicked}"
+		righticonclick="{!c.righticonclicked}"
+	/>
+</aura:component>
